@@ -18,12 +18,13 @@ public class ClienteController {
     private final ClienteService service;
 
     @PostMapping
-    public ClienteResponse criar (@RequestBody ClienteRequest request)
+    public ClienteResponse criar(@RequestBody ClienteRequest request) {
         return service.criar(request);
+    }
 
     @GetMapping
-    public List<Cliente> listar(){
-        return service.listarTodos();
+    public List<Cliente> listar() {
+        return service.ListarTodos();
     }
 
     @GetMapping("/{id}")
