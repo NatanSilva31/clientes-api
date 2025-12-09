@@ -7,8 +7,10 @@ import com.example.demo.model.Cliente;
 import com.example.demo.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ public class ClienteService {
 
     private final ClienteRepository repository;
 
+    @Transactional
     public ClienteResponse criar(ClienteRequest request) {
         Cliente cliente = new Cliente();
         cliente.setNome(request.getNome());
@@ -23,12 +26,14 @@ public class ClienteService {
         cliente.setCpf(request.getCpf());
 
         Cliente salvo = repository.save(cliente);
-
         return toResponse(salvo);
     }
 
-    public List<Cliente> ListarTodos(){
-        return repository.findAll();
+    public List<ClienteResponse> listarTodos(){
+        return repository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     public ClienteResponse buscarPorId(Long id) {
@@ -37,6 +42,7 @@ public class ClienteService {
         return toResponse(cliente);
     }
 
+    @Transactional
     public ClienteResponse atualizar(Long id, ClienteRequest request) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new ClienteNotFoundException(id));
@@ -49,6 +55,7 @@ public class ClienteService {
         return toResponse(atualizado);
     }
 
+    @Transactional
     public void deletar(Long id) {
         if (!repository.existsById(id)) {
             throw new ClienteNotFoundException(id);
@@ -56,14 +63,14 @@ public class ClienteService {
         repository.deleteById(id);
     }
 
-    private ClienteResponse toResponse(Cliente cliente) {
-        ClienteResponse resp = new ClienteResponse();
-        resp.setId(cliente.getId());
-        resp.setNome(cliente.getNome());
-        resp.setEmail(cliente.getEmail());
-        resp.setCpf(cliente.getCpf());
-        return resp;
+    // método auxiliar que você teve falta no projeto original
+    private ClienteResponse toResponse(Cliente c) {
+        ClienteResponse r = new ClienteResponse();
+        r.setId(c.getId());
+        r.setNome(c.getNome());
+        r.setEmail(c.getEmail());
+        r.setCpf(c.getCpf());
+        return r;
     }
 
 }
-

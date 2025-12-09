@@ -1,8 +1,10 @@
 package com.example.demo.dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteResponse {
     private Long id;
     private String nome;
